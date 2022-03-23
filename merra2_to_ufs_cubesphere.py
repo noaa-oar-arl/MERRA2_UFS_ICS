@@ -11,6 +11,7 @@ import xesmf as xe
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import os
 import netCDF4
+import fv3grid as fg
 
 def horizontal_interp(source,target,method='bilinear'):
     """regrid horizontally using a bilinear interpolation"""
@@ -101,8 +102,8 @@ def main():
     parser.add_argument('-m', '--merra_file', help='input merra2 3d file', type=str, required=True)
     parser.add_argument('-c', '--core_file', help='fv3 core tile file: example gfs_ctrl.nc', default=None, required=True)
     parser.add_argument('-t', '--tracer_file', help='fv3 tile tracer file: example gfs_data.tile1.nc', default=None, required=True)
-#     parser.add_argument('-r', '--resolution', help='fv3 grid resolution: example C384', default=None, required=True)
-    parser.add_argument('-g', '--grid_spec', help ='ufs grid_spec file: example grid_spec.tile1.nc', default=None, required=True) 
+    parser.add_argument('-r', '--resolution', help='fv3 grid resolution: example C384', default=None, required=True)
+#     parser.add_argument('-g', '--grid_spec', help ='ufs grid_spec file: example grid_spec.tile1.nc', default=None, required=True) 
     parser.add_argument('-a', '--aerosol', help='True: aerosol file.... False: Gas', default=True, required=False)
     args = parser.parse_args()
 
@@ -118,11 +119,9 @@ def main():
     tracer = open_dataset(tracer_file)
 
     tile = int(tracer_file.split('.')[1].strip('tile'))
-    grid = get_fv3_grid(grid_file) # open_dataset(grid)
+#     grid = get_fv3_grid(grid_file) # open_dataset(grid)
+    grid = fg.get_fv3_grid(res=args.resolution,tile=tile)
 
-    #reformat grid file for interpolation
-#    grid = grid.set_coords(['grid_lont','grid_latt']).area
-    #grid = grid.rename({"grid_yt":'y','grid_xt':'x','grid_lont':'lon','grid_latt':'lat'})
     grid.x.attrs = {}
     grid.y.attrs = {} 
     grid.lat_b.attrs = {}
