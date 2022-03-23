@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This function is create FV3 cubed sphere intial conditions for UFS-Aerosols.  
+This function is used to create FV3 cubed sphere intial conditions for UFS-Aerosols.  
 It uses the scipy.interpolate.interp1d function for vertical interpolation and 
 ESMF bilinear interpolation via xesmf for horizontal interpolation.  
 """
@@ -24,6 +24,18 @@ def vertical_interp(source,source_plevs,target_plevs):
     source['lev'] = source_plevs
     out = source.interp(lev=target_plevs[1:],method='linear')
     return out
+
+def get_fv3_grid(filename):
+    o = xr.open_dataset(filename)
+    o = o.rename({'grid_xt':'x',
+                  'grid_yt':'y',
+                  'grid_latt':'latitude',
+                  'grid_lont':'longitude',
+                  'grid_lat':'lat_b',
+                  'grid_lon':'lon_b',
+                  'grid_x':'x_b',
+                  'grid_y':'y_b'}).drop('time')
+    return o.squeeze().set_coords(['latitude','longitude','lat_b','lon_b'])
 
 def get_merra2_plevs():
     """
@@ -90,14 +102,15 @@ def main():
     parser.add_argument('-m', '--merra_file', help='input merra2 3d file', type=str, required=True)
     parser.add_argument('-c', '--core_file', help='fv3 core tile file: example gfs_ctrl.nc', default=None, required=True)
     parser.add_argument('-t', '--tracer_file', help='fv3 tile tracer file: example gfs_data.tile1.nc', default=None, required=True)
-    parser.add_argument('-r', '--resolution', help='fv3 grid resolution: example C384', default=None, required=True)
-#    parser.add_argument('-g', '--grid_spec', help ='fv3 grid_spec file: example grid_spec.tile1.nc', default=None, required=True) 
+#     parser.add_argument('-r', '--resolution', help='fv3 grid resolution: example C384', default=None, required=True)
+    parser.add_argument('-g', '--grid_spec', help ='ufs grid_spec file: example grid_spec.tile1.nc', default=None, required=True) 
     parser.add_argument('-a', '--aerosol', help='True: aerosol file.... False: Gas', default=True, required=False)
     args = parser.parse_args()
 
     merra_file = args.merra_file
     core_file = args.core_file
     tracer_file = args.tracer_file
+    grid_file = args.grid_spec
 #    grid = args.grid_spec
 
     # open files
@@ -106,7 +119,7 @@ def main():
     tracer = open_dataset(tracer_file)
 
     tile = int(tracer_file.split('.')[1].strip('tile'))
-    grid = fg.get_fv3_grid(res=args.resolution,tile=tile) # open_dataset(grid)
+    grid = get_fv3_grid(grid_file) # open_dataset(grid)
 
     #reformat grid file for interpolation
 #    grid = grid.set_coords(['grid_lont','grid_latt']).area
