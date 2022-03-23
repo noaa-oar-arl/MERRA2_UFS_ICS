@@ -29,7 +29,7 @@ MERRA2_PATH='MERRA2_400.inst3_3d_aer_Nv.${yyyymmdd}.nc4'
 	    
 # Modify the GFS files for UFS-Aersols with MERRA2 ICs
 for i in {1..6}; do 
-    ./merra2_to_fv3_cubesphere.py -m MERRA2_400.inst3_3d_aer_Nv.${yyyymmdd}.nc4 -c gfs_ctrl.nc -t gfs_data.tile${i}.nc -r C384 -g C384_grid_spec.tile${i}.nc
+    ./merra2_to_fv3_cubesphere.py -m MERRA2_400.inst3_3d_aer_Nv.${yyyymmdd}.nc4 -c gfs_ctrl.nc -t gfs_data.tile${i}.nc -r C384 
 done
 	    
 # go back to base directory 
