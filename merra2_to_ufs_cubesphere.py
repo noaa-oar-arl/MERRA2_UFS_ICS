@@ -8,7 +8,6 @@ ESMF bilinear interpolation via xesmf for horizontal interpolation.
 import xarray as xr
 import numpy as np
 import xesmf as xe
-import fv3grid as fg
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import os
 import netCDF4
