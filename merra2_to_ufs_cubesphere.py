@@ -110,7 +110,7 @@ def main():
     merra_file = args.merra_file
     core_file = args.core_file
     tracer_file = args.tracer_file
-    grid_file = args.grid_spec
+#    grid_file = args.grid_spec
 #    grid = args.grid_spec
 
     # open files
