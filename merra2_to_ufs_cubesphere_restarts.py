@@ -105,6 +105,7 @@ def main():
     parser.add_argument('-r', '--resolution', help='fv3 grid resolution: example C384', default=None, required=True)
 #     parser.add_argument('-g', '--grid_spec', help ='ufs grid_spec file: example grid_spec.tile1.nc', default=None, required=True) 
     parser.add_argument('-a', '--aerosol', help='True: aerosol file.... False: Gas', default=True, required=False)
+    parser.add_argument('-cyc','--time_index', help='Time index for cylce - 0Z=0 3z=1 6z=2 etc', default=0,required=False, type=int)
     args = parser.parse_args()
 
     merra_file = args.merra_file
@@ -114,7 +115,7 @@ def main():
 #    grid = args.grid_spec
 
     # open files
-    merra = open_dataset(merra_file).isel(time=0) # only get the first time stamp
+    merra = open_dataset(merra_file).isel(time=args.time_index) # only get the first time stamp
     core = open_dataset(core_file)
     tracer = open_dataset(tracer_file)
     
@@ -185,7 +186,9 @@ def main():
     for i in fv3_units:
         if fv3_units[i] == 'ug/kg':
             # this just a quick conversion from kg/kg to ug/kg 
-            tracer[i] = tracer[i] * 1e9
+            print('converting', i)
+            tracer[i].data = tracer[i].data * 1e9
+        
 
         elif fv3_units[i] == 'ppm':
             if i == 'dms': 
@@ -195,7 +198,8 @@ def main():
             if i == 'msa':
                 mw = 96.11
             # convert
-            tracer[i] = tracer[i] * d * 1e6 * 24.45 / mw
+            print('converting',i)
+            tracer[i].data = tracer[i].data * d * 1e6 * 24.45 / mw
         print('converting', i)
         tracer[i].attrs['units'] = fv3_units[i]
 
