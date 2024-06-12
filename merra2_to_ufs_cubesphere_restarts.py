@@ -165,9 +165,18 @@ def main():
     p = np.ones(tracer.o3mr.shape)
     ak,bk = get_fv3_plevs(core, return_akbk=True)
     #print(np.shape(ak))
-    print(tracer)
-    for i in range(tracer.o3mr.shape[1]):
-        for j in range(tracer.o3mr.shape[2]):
+    #print(tracer)
+    if len(tracer.o3mr.dims) > 3:
+        ylen = tracer.o3mr.shape[2]
+        xlen = tracer.o3mr.shape[3]
+    else:
+        ylen = tracer.o3mr.shape[1]
+        xlen = tracer.o3mr.shape[2]
+        #    print(ylen)
+#    print(xlen)
+    for i in range(ylen):
+        for j in range(xlen):
+            #print(i,j)
             p[0,:,i,j] = ak[1:] + bk[1:] * 101325.0
     d = p / (287 * core_tile.T)
 
