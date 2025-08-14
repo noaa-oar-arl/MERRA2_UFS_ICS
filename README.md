@@ -71,7 +71,7 @@ Then you can execute the python file for all tiles like so:
 
 ```bash 
 for i in {1..6}; do 
-    ./merra2_to_fv3_cubesphere.py -m MERRA2_400.inst3_3d_aer_Nv.${yyyymmdd}.nc4 -c gfs_ctrl.nc -t gfs_data.tile${i}.nc -r C384
+    ./merra2_to_fv3_cubesphere.py -m MERRA2_400.inst3_3d_aer_Nv.${yyyymmdd}.nc4 -c gfs_ctrl.nc -t gfs_data.tile${i}.nc -r C384 -utc 12
 done
 ```
 
